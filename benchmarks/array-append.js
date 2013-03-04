@@ -35,12 +35,28 @@ var tests = {
     },
     'for (i < length)':function (fix) {
         var arr = [];
-        var olength = arr.length
+        var length = arr.length
         for (var i = 0, l = fix.length; i < l; i++)
-            arr[olength + i] = fix[i];
+            arr[length + i] = fix[i];
         return arr;
 
     },
+    'while (i > -1) push':function (fix) {
+        var arr = [];
+        var i = fix.length-1;
+        while (i-- > -1)
+            arr.push(fix[i]);
+        return arr;
+
+    },
+    'while (i > -1) expand':function (fix) {
+        var arr = [];
+        var i = fix.length-1;
+        while (i-- > -1)
+            arr[arr.length] = fix[i];
+        return arr;
+    },
+
     'for var in expand':function (fix) {
         var arr = [];
         for (var i in fix)
@@ -96,39 +112,5 @@ Object.keys(_fix).forEach(function (k) {
         });
     });
 });
-
-//
-//    bench.test('push10s',function (fixtures) {
-//        ppush.apply([], fixtures.array10s);
-////        var array = fixtures.array, v, times = array.length;
-////        for (var i = 0; i < times; i++) {
-////            v = array[i];
-////        }
-//
-//    }).test('push100s',function (fixtures) {
-//            ppush.apply([], fixtures.array100s);
-//
-//        }).test('push1000s',function (fixtures) {
-//            ppush.apply([], fixtures.array1000s);
-//
-//        }).test('splice10s',function (fixtures) {
-//            var arr = [];
-//            var fix = fixtures.array10s;
-//
-//            arr.splice(arr.length, fix.length, fix);
-//        }).test('splice100s',function (fixtures) {
-//            var arr = [];
-//            var fix = fixtures.array100s;
-//            arr.splice(arr.length, fix.length, fix);
-//        }).test('splice1000s', function (fixtures) {
-//            var arr = [];
-//            var fix = fixtures.array1000s;
-//
-//            arr.splice(arr.length, fix.length, fix);
-//
-//
-//        });
-//
-//
 
 bench.run();

@@ -1,5 +1,6 @@
 var bench = require('microbench').renew('Array Operations');
-var ppush = Array.prototype.push, psplice = Array.prototype.splice;
+
+    var ppush = Array.prototype.push, psplice = Array.prototype.splice, forEach = Array.prototype.forEach;
 bench.set('default iterations', 100);
 var tests = {
     push:function (fix) {
@@ -19,6 +20,24 @@ var tests = {
         fix.forEach(function(v){
             arr.push(v);
         });
+
+        return arr;
+
+    },
+    'push in prototype forEach':function(fix){
+        var arr = [];
+        forEach.call(fix, function(v){
+            arr.push(v);
+        });
+
+        return arr;
+
+    },
+    'forEach.call(fix, function(v){ ppush.call(this, v);}, arr);':function(fix){
+        var arr = [];
+        forEach.call(fix, function(v){
+            ppush.call(this, v);
+        }, arr);
 
         return arr;
 
@@ -66,34 +85,15 @@ var tests = {
 }
 
 var _fix = (function (fixtures) {
-    fixtures['primitive array 10s'] = function () {
-        return bench.generators().primitiveNumArray(bench.tens(1));
-    };
-    fixtures['primitive array 100s'] = function () {
-        return bench.generators().primitiveNumArray(bench.hundreds(1));
-    };
-    fixtures['primitive array 1000s'] = function () {
-        return bench.generators().primitiveNumArray(bench.thousands(1));
-    };
-    fixtures['object array 10s'] = function () {
-        return bench.generators().objectArray(bench.tens(1));
-    };
-    fixtures['object array 100s'] = function () {
-        return bench.generators().objectArray(bench.hundreds(1));
-    };
-
-    fixtures['object array 1000s'] = function () {
-        return bench.generators().objectArray(bench.thousands(1));
-    };
-    fixtures['mixed array 10s'] = function () {
-        return bench.generators().primitiveMixedArray(bench.tens(1));
-    };
-    fixtures['mixed array 100s'] = function () {
-        return bench.generators().primitiveMixedArray(bench.hundreds(1));
-    };
-    fixtures['mixed array 1000s'] = function () {
-        return bench.generators().primitiveMixedArray(bench.thousands(1));
-    };
+    var count = 1;
+    var amount = ['tens', 'hundreds','thousands']
+    var types = ['primitiveNumArray', 'objectArray', 'primitiveMixedArray'];
+    var gen = bench.generators();
+    amount.forEach(function(a){
+        types.forEach(function(t){
+            fixtures[a+' of '+t] = function(){ return gen[t](bench[a](count)) }
+        });
+    });
     return fixtures;
 })({});
 
